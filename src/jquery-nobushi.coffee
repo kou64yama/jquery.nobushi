@@ -7,18 +7,9 @@
 # https://raw.githubusercontent.com/kou64yama/jquery.nobushi/master/LICENSE
 ###
 
-((factory) ->
-  'use strict'
+'use strict'
 
-  if typeof define is 'function' and define.amd
-    # AMD. Register as an anonymous module.
-    define ['jquery'], factory
-  else
-    # Browser globals
-    factory jQuery
-)(($) ->
-  'use strict'
-
+factory = ($ = jQuery) ->
   previousInit = $.fn.init
   previousVal = $.fn.val
 
@@ -94,4 +85,11 @@
     when (val = previousVal.call @) is null then val
     when $.isArray val then Number val[i] for i in [0...val.length]
     else Number val
-)
+
+
+if typeof define is 'function' and define.amd
+  # AMD. Register as an anonymous module.
+  define ['jquery'], factory
+else
+  # Browser globals
+  factory jQuery
