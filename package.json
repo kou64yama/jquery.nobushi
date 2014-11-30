@@ -1,6 +1,6 @@
 {
   "name": "jquery-nobushi",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "jQuery 野武士",
   "main": "index.js",
   "scripts": {
