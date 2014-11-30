@@ -17,20 +17,17 @@ module.exports = (grunt) ->
       coffee:
         files: ['<%= config.src %>/{,*/}*.coffee']
         tasks: ['newer:coffeelint:all', 'coffee:dist']
-      jsTest:
+      coffeeTest:
         files: [
           '<%= config.dist %>/<%= pkg.name %>.js'
           '<%= config.test %>/{spec,mock}/{,*/}*.coffee'
         ]
-        tasks: ['karma']
+        tasks: ['newer:coffeelint:test', 'karma']
       gruntfile:
         files: ['Gruntfile.coffee']
         tasks: ['coffeelint:gruntfile']
 
     coffee:
-      options:
-        bare: true
-
       dist:
         files:
           '<%= config.dist %>/<%= pkg.name %>.js': [
@@ -45,7 +42,15 @@ module.exports = (grunt) ->
 
     # Minify JavaScript code
     uglify:
+      options:
+        compress: true
+        mangle: true
+        preserveComments: 'some'
+        ASCIIOnly: true
       dist:
+        options:
+          sourceMap: true
+          sourceMapName: '<%= config.dist %>/<%= pkg.name %>.min.map'
         files:
           '<%= config.dist %>/<%= pkg.name %>.min.js': [
             '<%= config.dist %>/<%= pkg.name %>.js'
@@ -65,7 +70,6 @@ module.exports = (grunt) ->
     # Run some tasks in parallel to speed up the build process
     concurrent:
       test: [
-        'coffee:dist'
       ]
       dist: [
         'coffee:dist'
@@ -79,7 +83,6 @@ module.exports = (grunt) ->
 
 
   grunt.registerTask 'test', [
-    'clean:dist'
     'concurrent:test'
     'karma'
   ]
@@ -92,7 +95,6 @@ module.exports = (grunt) ->
 
   grunt.registerTask 'default', [
     'newer:coffeelint'
-    'build'
     'test'
     'watch'
   ]
