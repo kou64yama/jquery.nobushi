@@ -13,6 +13,8 @@ factory = ($ = jQuery) ->
   previousInit = $.fn.init
   previousVal = $.fn.val
   sequence = null
+  assigned = {}
+  id = 0
 
 
   ###
@@ -71,6 +73,31 @@ factory = ($ = jQuery) ->
       sequence = num
       @
     else sequence
+
+
+  ###
+  # @overload id()
+  #   @return [Number] ID
+  #
+  # @overload id(num, options)
+  #   @param [Number] num
+  #   @param [Boolean] options.delete
+  #   @return [jQuery]
+  ###
+  $.id = (num, {remove} = {}) -> switch
+    when arguments.length is 0
+      if assigned[++id]
+        $.id()
+      else
+        assigned[id] = true
+        id
+    when remove
+      delete assigned[num]
+      id = num - 1 if num <= id
+      @
+    else
+      assigned[num] = true
+      @
 
 
   ###
