@@ -13,12 +13,15 @@
   var factory;
 
   factory = function($) {
-    var previousInit, previousVal;
+    var assigned, id, previousInit, previousVal, sequence;
     if ($ == null) {
       $ = jQuery;
     }
     previousInit = $.fn.init;
     previousVal = $.fn.val;
+    sequence = null;
+    assigned = {};
+    id = 0;
 
     /*
      * @param [Integer] length
@@ -68,6 +71,65 @@
         });
       };
       return [_pad($.rand32()), _pad($.rand32() & 0xffff0fff | 0x00004000), _pad($.rand32() & 0xbfffffff | 0x80000000), _pad($.rand32())].join('').replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, '$1-$2-$3-$4-$5');
+    };
+
+    /*
+     * @overload seq()
+     *   @return [Number] sequence
+     *
+     * @overload seq(num)
+     *   @param [Number] num
+     *   @return [jQuery]
+     */
+    $.seq = function(num) {
+      switch (false) {
+        case arguments.length !== 0:
+          switch (sequence) {
+            case null:
+              return sequence = 1;
+            default:
+              return ++sequence;
+          }
+          break;
+        case !(sequence < num):
+          sequence = num;
+          return this;
+        default:
+          return sequence;
+      }
+    };
+
+    /*
+     * @overload id()
+     *   @return [Number] ID
+     *
+     * @overload id(num, options)
+     *   @param [Number] num
+     *   @param [Boolean] options.delete
+     *   @return [jQuery]
+     */
+    $.id = function(num, _arg) {
+      var remove;
+      remove = (_arg != null ? _arg : {}).remove;
+      switch (false) {
+        case arguments.length !== 0:
+          if (assigned[++id]) {
+            return $.id();
+          } else {
+            assigned[id] = true;
+            return id;
+          }
+          break;
+        case !remove:
+          delete assigned[num];
+          if (num <= id) {
+            id = num - 1;
+          }
+          return this;
+        default:
+          assigned[num] = true;
+          return this;
+      }
     };
 
     /*
