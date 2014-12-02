@@ -12,6 +12,7 @@
 factory = ($ = jQuery) ->
   previousInit = $.fn.init
   previousVal = $.fn.val
+  sequence = null
 
 
   ###
@@ -52,6 +53,24 @@ factory = ($ = jQuery) ->
       (_pad $.rand32() & 0xbfffffff | 0x80000000),
       (_pad $.rand32())
     ].join('').replace /^(.{8})(.{4})(.{4})(.{4})(.{12})$/, '$1-$2-$3-$4-$5'
+
+
+  ###
+  # @overload seq()
+  #   @return [Number] sequence
+  #
+  # @overload seq(num)
+  #   @param [Number] num
+  #   @return [jQuery]
+  ###
+  $.seq = (num) -> switch
+    when arguments.length is 0 then switch sequence
+      when null then sequence = 1
+      else ++sequence
+    when sequence < num
+      sequence = num
+      @
+    else sequence
 
 
   ###
