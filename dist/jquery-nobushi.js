@@ -54,6 +54,16 @@
     };
 
     /*
+     * @param [String] text not camel case
+     * @return [String] camel case
+     */
+    $.camelCase = function(text) {
+      return text.toLowerCase().replace(/[-_]+(.)/g, function(match, group1) {
+        return group1.toUpperCase();
+      });
+    };
+
+    /*
      * @return [Integer] 32 bit random number
      */
     $.rand32 = function() {

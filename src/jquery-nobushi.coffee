@@ -38,6 +38,15 @@ factory = ($ = jQuery) ->
 
 
   ###
+  # @param [String] text not camel case
+  # @return [String] camel case
+  ###
+  $.camelCase = (text) ->
+    text.toLowerCase().replace /[-_]+(.)/g, (match, group1) ->
+      group1.toUpperCase()
+
+
+  ###
   # @return [Integer] 32 bit random number
   ###
   $.rand32 = ->
