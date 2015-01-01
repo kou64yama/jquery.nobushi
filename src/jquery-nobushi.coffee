@@ -12,6 +12,9 @@
 factory = ($ = jQuery) ->
   previousInit = $.fn.init
   previousVal = $.fn.val
+  sequence = null
+  assigned = {}
+  id = 0
 
 
   ###
@@ -52,6 +55,49 @@ factory = ($ = jQuery) ->
       (_pad $.rand32() & 0xbfffffff | 0x80000000),
       (_pad $.rand32())
     ].join('').replace /^(.{8})(.{4})(.{4})(.{4})(.{12})$/, '$1-$2-$3-$4-$5'
+
+
+  ###
+  # @overload seq()
+  #   @return [Number] sequence
+  #
+  # @overload seq(num)
+  #   @param [Number] num
+  #   @return [jQuery]
+  ###
+  $.seq = (num) -> switch
+    when arguments.length is 0 then switch sequence
+      when null then sequence = 1
+      else ++sequence
+    when sequence < num
+      sequence = num
+      @
+    else sequence
+
+
+  ###
+  # @overload id()
+  #   @return [Number] ID
+  #
+  # @overload id(num, options)
+  #   @param [Number] num
+  #   @param [Boolean] options.delete
+  #   @return [jQuery]
+  ###
+  $.id = (num, {remove} = {}) -> switch
+    when arguments.length is 0
+      if assigned[++id]
+        $.id()
+      else
+        assigned[id] = true
+        id
+    when remove
+      delete assigned[num]
+      id = num - 1 if num <= id
+      @
+    else
+      assigned[num] = true
+      @
 
 
   ###
